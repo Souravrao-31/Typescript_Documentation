@@ -630,6 +630,53 @@ class ServiceTax implements ITax {
 
 As you can see from the above code an interface ITax has been defined using the interface keyword. It has one property named taxpayerId and a function calculateTax(). Then there is a class IncomeTax that implements ITax using the implements keyword. It is mandatory for IncomeTax class to implement taxpayerId property and the calculateTax() method. Similarly, another class named ServiceTax implements ITax.
 
+#### TypeScript - Interfaces with Optional Properties
+
+Interfaces with optional properties are written similar to other interfaces, with each optional property denoted by a **?** at the end of the property name in the declaration.
+
+#### Example
+
+#### optional-properties.ts
+
+```
+interface Person {
+    name: string;
+    age: number;
+    phone?: string;
+}
+
+let p: Person = {name: "Ashlee", age: 29};
+console.log(p);
+```
+
+#### Output
+
+```
+{ name: 'Ashlee', age: 29 }
+```
+
+If we don't use ? with property 'phone':
+
+#### without-optional-properties.ts
+
+```
+interface Person {
+    name: string;
+    age: number;
+    phone: string;
+}
+
+let p: Person = {name: "Ashlee", age: 29};
+console.log(p);
+```
+
+#### Output
+
+```
+without-optional-properties.ts(7,5): error TS2322: Type '{ name: string; age: number; }' is not assignable to type 'Person'.
+  Property 'phone' is missing in type '{ name: string; age: number; }'.
+```
+
 ## 10. Modules
 
 As your TypeScript code base grows it becomes important to organize classes and interfaces for better maintainability. TypeScript modules allow you to do just that. A module is a container for your code that helps you organize your code in a neat way. Conceptually you may find them similar to .NET namespaces. Let’s see how to create a module.
