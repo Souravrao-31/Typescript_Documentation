@@ -4,7 +4,7 @@ By definition, “TypeScript is JavaScript for application-scale development.”
 
 In short, TypeScript is a superset of JavaScript that has optional typing and compiles to plain JavaScript.
 
-![Screenshot from 2021-10-07 11-23-44](/home/sourav/Pictures/Screenshot from 2021-10-07 11-23-44.png)
+![Screenshot from 2021-10-07 11-23-44](https://user-images.githubusercontent.com/47225882/144562591-b0eae89a-7ae1-480d-b0d2-43dcf183f6f0.png)
 
 ## Features of TypeScript
 
@@ -18,7 +18,8 @@ In short, TypeScript is a superset of JavaScript that has optional typing and co
 
 
 
-![Screenshot from 2021-10-07 11-30-37](/home/sourav/Pictures/Screenshot from 2021-10-07 11-30-37.png)
+![Screenshot from 2021-10-07 11-30-37](https://user-images.githubusercontent.com/47225882/144562735-6cb7bc0b-44eb-4c3d-8f1a-469a67e029b7.png)
+
 
 ### ## What do I need to learn to use TypeScript?
 
@@ -41,32 +42,35 @@ JavaScript is the most popular language to implement scripting for the frontend 
 TypeScript has a variety of basic types, like Boolean, Number, String, Array, Tuple, etc. Some of these don’t exist in JS.
 
 
+![Screenshot from 2021-10-07 11-33-15](https://user-images.githubusercontent.com/47225882/144562818-f4d61261-be35-438f-966e-14ad1d716281.png)
 
-![Screenshot from 2021-10-07 11-33-15](/home/sourav/Pictures/Screenshot from 2021-10-07 11-33-15.png)
 
 
 
 ## Types
 
-![Screenshot from 2021-10-07 13-43-08](/home/sourav/Pictures/Screenshot from 2021-10-07 13-43-08.png)
+
+![Screenshot from 2021-10-07 13-43-08](https://user-images.githubusercontent.com/47225882/144562863-19d853c3-77a7-4987-ade7-364fa68df720.png)
 
 
 
 
+![Screenshot from 2021-10-07 14-29-19](https://user-images.githubusercontent.com/47225882/144562942-95b4479a-5f1d-47d7-93c8-733af07b296d.png)
 
-# ![Screenshot from 2021-10-07 14-29-19](/home/sourav/Pictures/Screenshot from 2021-10-07 14-29-19.png)
+
 
 
 
 # Interface
 
-![Screenshot from 2021-10-07 14-19-08](/home/sourav/Pictures/Screenshot from 2021-10-07 14-19-08.png)
+![Screenshot from 2021-10-07 14-19-08](https://user-images.githubusercontent.com/47225882/144563016-ab3bb908-dc64-4f5d-9e86-9412a3fac36b.png)
+
 
 # Advanced Types
 
 
+![Screenshot from 2021-10-07 14-22-13](https://user-images.githubusercontent.com/47225882/144563051-0b60b68a-3c62-41b9-9fcf-f1e306865da0.png)
 
-![Screenshot from 2021-10-07 14-22-13](/home/sourav/Pictures/Screenshot from 2021-10-07 14-22-13.png)
 
 
 
