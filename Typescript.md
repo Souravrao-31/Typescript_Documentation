@@ -4,7 +4,7 @@ By definition, “TypeScript is JavaScript for application-scale development.”
 
 In short, TypeScript is a superset of JavaScript that has optional typing and compiles to plain JavaScript.
 
-![Screenshot from 2021-10-07 11-23-44](/pictures/Screenshot from 2021-10-07 11-23-44.png)
+![Screenshot from 2021-10-07 11-23-44](pictures/Screenshot from 2021-10-07 11-23-44.png)
 
 ## Features of TypeScript
 
