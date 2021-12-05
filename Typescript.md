@@ -1,4 +1,4 @@
-## Typescript
+# Typescript
 
 By definition, “TypeScript is JavaScript for application-scale development.”
 
@@ -21,7 +21,7 @@ In short, TypeScript is a superset of JavaScript that has optional typing and co
 ![Screenshot from 2021-10-07 11-30-37](https://user-images.githubusercontent.com/47225882/144562735-6cb7bc0b-44eb-4c3d-8f1a-469a67e029b7.png)
 
 
-### ## What do I need to learn to use TypeScript?
+### What do I need to learn to use TypeScript?
 
 TypeScript is essentially a JS linter. Or, JS with documentation that the compiler can understand.
 
