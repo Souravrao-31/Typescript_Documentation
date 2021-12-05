@@ -719,3 +719,113 @@ The above code defines Company module using the module keyword. The Company modu
 6. generics
 7. Rest and spread operator in Typescript
 
+# Interface Extending Interfaces
+
+In TypeScript, an interface can extend other interfaces as well. One interface can extend multiple interfaces at a time.
+
+
+
+```tsx
+interface Component {
+    w: number;
+    h: number;
+    enableEvents(enable: boolean): void;
+}
+
+interface Button extends Component {
+    label: string;
+}
+
+//implementing extended interface
+class RadioButton implements Button {
+    h: number;
+    label: string;
+    w: number;
+    private enable: boolean;
+
+    constructor(h: number, w: number, label: string) {
+        this.h = h;
+        this.w = w;
+        this.label = label;
+    }
+
+    enableEvents(enable: boolean): void {
+        this.enable = enable;
+    }
+}
+let radioButton: Button = new RadioButton(100, 20, "test");
+radioButton.enableEvents(true)
+console.log(radioButton);
+```
+
+#### Output
+
+```
+RadioButton { h: 100, w: 20, label: 'test', enable: true }
+```
+
+#### extending-interfaces.js
+
+```ts
+class RadioButton {
+    constructor(h, w, label) {
+        this.h = h;
+        this.w = w;
+        this.label = label;
+    }
+    enableEvents(enable) {
+        this.enable = enable;
+    }
+}
+let radioButton = new RadioButton(100, 20, "test");
+radioButton.enableEvents(true);
+console.log(radioButton);
+```
+
+
+
+# Interface as Functions
+
+## Function that accepts an argument:
+
+Include the argument name and its type. The argument name is required but does not have to match when you instantiate the real function, but the type does have to match. It’s *duck typed* as is everything in Typescript.
+
+```tsx
+interface MyClassProps {
+    anotherProp: number;
+    onChange(name: string): any;
+}
+```
+
+##  Function that accepts an argument and returns a value:
+
+This function accepts a string as an argument and returns a number.
+
+```tsx
+interface MyClassProps {
+    onChange(name: string): number;
+}tsx
+```
+
+## Function that is optional:
+
+Suffix the property name with the Optional Operator `?`. Put the `?` after the property name and before the argument list. In TypeScript React all props are required unless you use the Optional Operator. As with any non-required prop in React you’ll have to check if the prop is `undefined`before using it.
+
+```tsx
+interface MyClassProps {
+    onChange?(name: string): number;
+    niceProp: boolean;tsx
+}
+```
+
+## Using the type keyword:
+
+Sometimes it’s convenient to declare the function’s type first, then use the type in an interface. To declare a function as a type the syntax is slightly different. Use the arrow operator.
+
+```tsx
+type MyFunctionType = (name: string) => number;interface MyClassProps {
+    onChange: MyFunctionType;
+    niceProp: string;
+}
+```
+
