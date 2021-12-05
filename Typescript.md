@@ -829,3 +829,440 @@ type MyFunctionType = (name: string) => number;interface MyClassProps {
 }
 ```
 
+
+
+# Decorators in TypeScript
+
+
+
+*Decorators* are a way to decorate members of a class, or a class itself, with extra functionality. When you apply a decorator to a class or a class member, you are actually calling a function that is going to receive details of what is being decorated, and the decorator implementation will then be able to transform the code dynamically, adding extra functionality, and reducing boilerplate code. They are a way to have metaprogramming in TypeScript, which is a programming technique that enables the programmer to create code that uses other code from the application itself as data.
+
+## Types of decorators
+
+In TypeScript, decorators are functions that can be attached to classes and their members, such as methods and properties. Let’s look at some examples.
+
+### Class decorator
+
+When you attach a function to a class as a decorator, you’ll receive the class constructor as the first parameter.
+
+```
+const classDecorator = (target: Function) => {
+  // do something with your class
+}
+
+@classDecorator
+class Rocket {}
+```
+
+If you want to override the properties within the class, you can return a new class that extends its constructor and set the properties.
+
+```
+const addFuelToRocket = (target: Function) => {
+  return class extends target {
+    fuel = 100
+  }
+}
+
+@addFuelToRocket
+class Rocket {}
+```
+
+Now your `Rocket` class will have a `fuel` property with a default value of `100`.
+
+```
+const rocket = new Rocket()
+console.log((rocket).fuel) // 100
+```
+
+### Method decorator
+
+Another good place to attach a decorator is the class method. Here, you’re getting three parameters in your function: `target`, `propertyKey`, and `descriptor`.
+
+```
+const myDecorator = (target: Object, propertyKey: string, descriptor: PropertyDescriptor) =>  {
+  // do something with your method
+}
+
+class Rocket {
+  @myDecorator
+  launch() {
+    console.log("Launching rocket in 3... 2... 1... 🚀")
+  }
+}
+```
+
+The first parameter contains the class where this method lives, which, in this case, is the `Rocket` class. The second parameter contains your method name in string format, and the last parameter is the property descriptor, a set of information that defines a property behavior. This can be used to observe, modify, or replace a method definition.
+
+The method decorator can be very useful if you want to extend the functionality of your method, which we’ll cover later.
+
+### Property decorator
+
+Just like the method decorator, you’ll get the `target` and `propertyKey` parameter. The only difference is that you don’t get the property descriptor.
+
+```
+const propertyDecorator = (target: Object, propertyKey: string) => {
+  // do something with your property
+}
+```
+
+There are several other places to attach your decorators in TypeScript, but that’s beyond the scope of this article. If you’re curious, you can read more about it in the [TypeScript docs](https://paper.dropbox.com/doc/A-practical-guide-to-TypeScript-decorators--Az3eBblNHj5Doz3Z4NyijRAuAQ-7CB7irprCVgmPH1mS0mY4).
+
+## Use cases for TypeScript decorators
+
+Now that we’ve covered what decorators are and how to use them properly, let’s take a look at some specific problems decorators can help us solve.
+
+### **Calculate** **e**xecution **t**ime
+
+Let’s say you want to estimate how long it takes to run a function as a way to gauge your application performance. You can create a decorator to calculate the execution time of a method and print it on the console.
+
+```
+class Rocket {
+  @measure
+  launch() {
+    console.log("Launching in 3... 2... 1... 🚀");
+  }
+}
+```
+
+The `Rocket` class has a `launch` method inside of it. To measure the execution time of the `launch` method, you can attach the `measure` decorator.
+
+```
+import { performance } from "perf_hooks";
+
+const measure = (
+  target: Object,
+  propertyKey: string,
+  descriptor: PropertyDescriptor
+) => {
+  const originalMethod = descriptor.value;
+
+  descriptor.value = function (...args) {
+    const start = performance.now();
+    const result = originalMethod.apply(this, args);
+    const finish = performance.now();
+    console.log(`Execution time: ${finish - start} milliseconds`);
+    return result;
+  };
+
+  return descriptor;
+};
+```
+
+As you can see, the `measure` decorator replaces the original method with a new one that enables it to calculate the execution time of the original method and log it to the console.
+
+To calculate the execution time, we’ll use the [Performance Hooks API](https://nodejs.org/api/perf_hooks.html) from the Node.js standard library.
+
+Instantiate a new `Rocket` instance and call the `launch` method.
+
+```
+const rocket = new Rocket();
+rocket.launch();
+```
+
+You’ll get the following result.
+
+```
+Launching in 3... 2... 1... 🚀
+Execution time: 1.0407989993691444 milliseconds
+```
+
+### Decorator factory
+
+To configure your decorators to act differently in a certain scenario, you can use a concept called decorator factory.
+
+Decorator factory is a function that returns a decorator. This enables you to customize the behavior of your decorators by passing some parameters in the factory.
+
+Take a look at the example below.
+
+```
+const changeValue = (value) => (target: Object, propertyKey: string) => {
+  Object.defineProperty(target, propertyKey, { value });
+};
+```
+
+The `changeValue` function returns a decorator that change the value of the property based on the value passed from your factory.
+
+```
+class Rocket {
+  @changeValue(100)
+  fuel = 50
+}
+
+const rocket = new Rocket()
+console.log(rocket.fuel) // 100
+```
+
+Now, if you bind your decorator factory to the `fuel` property, the value will be `100`.
+
+### Automatic error guard
+
+Let’s implement what we’ve learned to solve a real-world problem.
+
+```
+class Rocket {
+  fuel = 50;
+
+  launchToMars() {
+    console.log("Launching to Mars in 3... 2... 1... 🚀");
+  }
+}
+```
+
+Let’s say you have a `Rocket` class that has a `launchToMars` method. To launch a rocket to Mars, the fuel level must be above 100.
+
+Let’s create the decorator for it.
+
+```
+const minimumFuel = (fuel: number) => (
+  target: Object,
+  propertyKey: string,
+  descriptor: PropertyDescriptor
+) => {
+  const originalMethod = descriptor.value;
+
+  descriptor.value = function (...args) {
+    if (this.fuel > fuel) {
+      originalMethod.apply(this, args);
+    } else {
+      console.log("Not enough fuel!");
+    }
+  };
+
+  return descriptor;
+}; 
+```
+
+The `minimumFuel` is a factory decorator. It takes the `fuel` parameter, which indicates how much fuel is needed to launch a particular rocket.
+
+To check the fuel condition, wrap the original method with a new method, just like in the previous use case.
+
+Now you can plug your decorator to the `launchToMars` method and set the minimum fuel level.
+
+```
+class Rocket {
+  fuel = 50;
+
+  @minimumFuel(100)
+  launchToMars() {
+    console.log("Launching to Mars in 3... 2... 1... 🚀");
+  }
+}
+```
+
+Now if you invoke the `launchToMars` method, it won’t launch the rocket to Mars because the current fuel level is 50.
+
+```
+const rocket = new Rocket()
+rocket.launchToMars()
+
+
+Not enough fuel!
+```
+
+The cool thing about this decorator is that you can apply the same logic into a different method without rewriting the whole if-else statement.
+
+Let’s say you want to make a new method to launch the rocket to the moon. To do that, the fuel level must be above 25.
+
+Repeat the same code and change the parameter.
+
+```
+class Rocket {
+  fuel = 50;
+
+  @minimumFuel(100)
+  launchToMars() {
+    console.log("Launching to Mars in 3... 2... 1... 🚀");
+  }
+
+  @minimumFuel(25)
+  launchToMoon() {
+    console.log("Launching to Moon in 3... 2... 1... 🚀")
+  }
+}
+```
+
+Now, this rocket can be launched to the moon.
+
+```
+const rocket = new Rocket()
+rocket.launchToMoon()
+
+
+Launching to Moon in 3... 2... 1... 🚀
+```
+
+This type of decorator can be very useful for authentication and authorization purposes, such as checking whether a user is allowed to access some private data or not.
+
+
+
+
+
+# Generics
+
+A major part of software engineering is building components that not only have well-defined and consistent APIs, but are also reusable. Components that are capable of working on the data of today as well as the data of tomorrow will give you the most flexible capabilities for building up large software systems.
+
+It’ll be easier to explain TypeScript generics through a simple example.
+
+Suppose you need to develop a function that returns a random element in an array of number.
+
+The following `getRandomNumberElement()` function takes an array of numbers as its parameter and returns a random element from the array:
+
+```
+function getRandomNumberElement(items: number[]): number {
+    let randomIndex = Math.floor(Math.random() * items.length);
+    return items[randomIndex];
+}Code language: TypeScript (typescript)
+```
+
+To get a random element of an array, you need to:
+
+- Find the random index first.
+- Get the random element based on the random index.
+
+To find the random index of an array, we used the `Math.random()` that returns a random number between 0 and 1, multiplied it with the length of the array, and applied the `Math.floor()` on the result.
+
+The following shows how to use the `getRandomNumberElement()` function:
+
+```
+let numbers = [1, 5, 7, 4, 2, 9];
+console.log(getRandomNumberElement(numbers));Code language: TypeScript (typescript)
+```
+
+Assuming that you need to get a random element from an array of strings This time, you may come up with a new function:
+
+```
+function getRandomStringElement(items: string[]): string {
+    let randomIndex = Math.floor(Math.random() * items.length);
+    return items[randomIndex];
+}Code language: TypeScript (typescript)
+```
+
+The logic of the `getRandomStringElement()` function is the same as the one in the `getRandomNumberElement()` function.
+
+This example shows how to use the `getRandomStringElement()` function:
+
+```
+let colors = ['red', 'green', 'blue'];
+console.log(getRandomStringElement(colors));Code language: TypeScript (typescript)
+```
+
+Later you may need to get a random element in an array of objects. Creating a new function every time you want to get a random element from a new array type is not scalable.
+
+### Using the any type
+
+One solution for this issue is to set the type of the array argument as `any[]`. By doing this, you need to write just one function that works with an array of any type.
+
+```
+function getRandomAnyElement(items: any[]): any {
+    let randomIndex = Math.floor(Math.random() * items.length);
+    return items[randomIndex];
+}Code language: TypeScript (typescript)
+```
+
+The `getRandomAnyElement()` works with an array of the `any` type including an array of numbers, strings, objects, etc.:
+
+```
+let numbers = [1, 5, 7, 4, 2, 9];
+let colors = ['red', 'green', 'blue'];
+
+console.log(getRandomAnyElement(numbers));
+console.log(getRandomAnyElement(colors));Code language: TypeScript (typescript)
+```
+
+This solution works fine. However, it has a drawback.
+
+It doesn’t allow you to enforce the type of the returned element. In other words, it isn’t type-safe.
+
+A better solution to avoid code duplication while preserving the type is to use generics.
+
+### TypeScript generics come to rescue
+
+The following shows a generic function that returns the random element from an array of type `T`:
+
+```
+function getRandomElement<T>(items: T[]): T {
+    let randomIndex = Math.floor(Math.random() * items.length);
+    return items[randomIndex];
+}Code language: TypeScript (typescript)
+```
+
+This function uses type variable `T`. The `T` allows you to capture the type that is provided at the time of calling the function. Also, the function uses the `T` type variable as its return type.
+
+This `getRandomElement()` function is generic because it can work with any data type including string, number, objects,…
+
+By convention, we use the letter `T` as the type variable. However, you can freely use other letters such as `A`, `B` `C`, …
+
+## Calling a generic function
+
+The following shows how to use the `getRandomElement()` with an array of numbers:
+
+```
+let numbers = [1, 5, 7, 4, 2, 9];
+let randomEle = getRandomElement<number>(numbers); 
+console.log(randomEle);Code language: TypeScript (typescript)
+```
+
+This example explicitly passes `number` as the `T` type into the `getRandomElement()` function.
+
+In practice, you’ll use <u>type inference</u> for the argument. It means that you let the TypeScript compiler set the value of `T` automatically based on the type of argument that you pass into, like this:
+
+```
+let numbers = [1, 5, 7, 4, 2, 9];
+let randomEle = getRandomElement(numbers); 
+console.log(randomEle);Code language: TypeScript (typescript)
+```
+
+In this example, we didn’t pass the `number` type to the `getRandomElement()` explicitly. The compiler just looks at the argument and sets `T` to its type.
+
+Now, the `getRandomElement()` function is also type-safe. For example, if you assign the returned value to a string variable, you’ll get an error:
+
+```
+let numbers = [1, 5, 7, 4, 2, 9];
+let returnElem: string;
+returnElem = getRandomElement(numbers);  // compiler errorCode language: TypeScript (typescript)
+```
+
+## Generic functions with multiple types
+
+The following illustrates how to develop a generic function with two type variables `U` and `V`:
+
+```
+function merge<U, V>(obj1: U, obj2: V) {
+    return {
+        ...obj1,
+        ...obj2
+    };
+}Code language: JavaScript (javascript)
+```
+
+The `merge()` function merges two objects with the type `U` and `V`. It combines the properties of the two objects into a single object.
+
+Type inference infers the returned value of the `merge()` function as an intersection type of `U` and `V`, which is `U & V`
+
+The following illustrates how to use the `merge()` function that merges two objects:
+
+```
+let result = merge(
+    { name: 'John' },
+    { jobTitle: 'Frontend Developer' }
+);
+
+console.log(result);Code language: JavaScript (javascript)
+```
+
+Output:
+
+```
+{ name: 'John', jobTitle: 'Frontend Developer' }Code language: CSS (css)
+```
+
+## Benefits of TypeScript generics
+
+The following are benefits of TypeScript generics:
+
+- Leverage type checks at the compile time.
+- Eliminate **type castings**
+- Allow you to implement generic algorithms.
+
+
+
