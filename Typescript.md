@@ -1266,3 +1266,23 @@ The following are benefits of TypeScript generics:
 
 
 
+### Rest Properties
+
+Rest properties collect the remaining own enumerable property keys that are not already picked off by the destructuring pattern. Those keys and their values are copied onto a new object.
+
+```
+let { x, y, ...z } = { x: 1, y: 2, a: 3, b: 4 };
+x; // 1
+y; // 2
+z; // { a: 3, b: 4 }
+```
+
+### Spread Properties
+
+###### Spread properties in object initializers copies own enumerable properties from a provided object onto the newly created object.
+
+```
+let n = { x, y, ...z };
+n; // { x: 1, y: 2, a: 3, b: 4 }
+```
+
